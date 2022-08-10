@@ -16,21 +16,21 @@ question_helpfulness int DEFAULT 0
 DROP TABLE IF EXISTS answers;
 CREATE TABLE answers (
 answer_id int NOT NULL PRIMARY KEY,
+question_id int,
 answer_body varchar(255),
 answer_date varchar(255),
 answerer_name varchar(255),
 answerer_email varchar(255),
 answer_reported boolean DEFAULT false,
 answer_helpfulness int DEFAULT 0,
-question_id int,
 FOREIGN KEY (question_id) REFERENCES questions(question_id)
 );
 
 DROP TABLE IF EXISTS photos;
 CREATE TABLE photos (
 photo_id int NOT NULL PRIMARY KEY,
-photo_url varchar(255),
 answer_id int,
+photo_url varchar(255),
 FOREIGN KEY (answer_id) REFERENCES answers(answer_id)
 );
 

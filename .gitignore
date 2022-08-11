@@ -1,5 +1,7 @@
 config.js
 bundle.js
+.csv
+.DS_Store
 
 # Logs
 logs

@@ -45,27 +45,107 @@ const getQuestions = (productId) => {
 }
 
 const postQuestion = (data) => {
+  let productId = data.product_id;
+  let body = data.body;
+  let name = data.name;
+  let email = data.email;
+  let date = new Date().toISOString();
+
+  return new Promise ((resolve, reject) => {
+    let queryPostQuestion = `
+    INSERT INTO questions
+    (product_id, question_body, question_date, asker_name, asker_email, question_id)
+    VALUES (${productId}, '${body}', '${date}', '${name}', '${email}',
+    ((SELECT MAX(question_id) FROM questions)+1));
+    `
+    pool.query(queryPostQuestion, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
 }
 
-// A
-const getAnswer = (questionId) => {
-}
 
 const postAnswer = (data, questionId) => {
+  let productId = data.product_id;
+  let body = data.body;
+  let name = data.name;
+  let email = data.email;
+  let date = new Date().toISOString();
+
+  return new Promise ((resolve, reject) => {
+    let queryPostAnswer = ``
+
+    pool.query(queryPostQuestion, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
 }
 
-// Q
+
 const questionHelpful = (questionId) => {
+  return new Promise ((resolve, reject) => {
+    let queryQHelpful = `UPDATE questions SET question_helpfulness = question_helpfulness + 1 WHERE question_id = ${questionId};`
+
+    pool.query(queryQHelpful, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
 }
 
-const reportQuestions = (questionId) => {
-}
-
-// A
 const answerHelpful = (answerId) => {
+  return new Promise ((resolve, reject) => {
+    let queryAHelpful = `UPDATE answers SET answer_helpfulness = answer_helpfulness + 1 WHERE answer_id = ${answerId};`
+
+    pool.query(queryAHelpful, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
+}
+
+const reportQuestion = (questionId) => {
+  return new Promise ((resolve, reject) => {
+    let queryQReport = `UPDATE questions SET question_reported = false WHERE question_id = ${questionId};`
+
+    pool.query(queryQReport, (err, result) => {
+      if (err) {
+        console.log('err in DB: ', err);
+        reject(err);
+      } else {
+        console.log('success in DB: ', result);
+        resolve(result);
+      }
+    })
+  })
 }
 
 const reportAnswer = (answerId) => {
+  return new Promise ((resolve, reject) => {
+    let queryAReport = `UPDATE answers SET answer_reported = true WHERE answer_id = ${answerId};`
+
+    pool.query(queryAReport, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
 }
 
 
@@ -75,6 +155,7 @@ module.exports = {
   postAnswer,
   questionHelpful,
   answerHelpful,
+  reportQuestion,
   reportAnswer,
 };
 

@@ -120,7 +120,7 @@ const answerHelpful = (answerId) => {
 
 const reportQuestion = (questionId) => {
   return new Promise ((resolve, reject) => {
-    let queryQReport = `UPDATE questions SET question_reported = false WHERE question_id = ${questionId};`
+    let queryQReport = `UPDATE questions SET question_reported = true WHERE question_id = ${questionId};`
 
     pool.query(queryQReport, (err, result) => {
       if (err) {

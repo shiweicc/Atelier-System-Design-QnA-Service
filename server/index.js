@@ -13,7 +13,7 @@ app.get(`/qa/questions`, (req, res) => {
 
   db.getQuestions(productId)
   .then((data) => {
-    res.status(201).send(data.rows);
+    res.status(200).send(data.rows);
   })
   .catch((err) => {
     res.status(500).send(err);
@@ -32,7 +32,6 @@ app.post("/qa/questions", (req, res) => {
     })
 });
 
-
 /**** POST an answer ****/
 //(question_id, body, name, email, photos, 201 CREATED)
 app.post("/qa/questions/:question_id/answers", (req, res) => {
@@ -41,7 +40,7 @@ app.post("/qa/questions/:question_id/answers", (req, res) => {
   db.postAnswer(req.body)
     .then((result) => {
       let answerId = result.rows[0].answer_id;
-      if (photos.length > 0) {
+      if (photos.length) {
         let promises = photos.map(url => db.postPhoto(answerId, url))
         Promise.all(promises)
           .then(data => {
@@ -106,7 +105,3 @@ app.put("/qa/answers/:answer_id/report", (req, res) => {
 
 
 module.exports = app;
-
-
-
-

@@ -9,8 +9,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 /**** GEI questions ****/
 app.get(`/qa/questions`, (req, res) => {
-  let productId = req.query.product_id;
-
+  let productId = Number(req.query.product_id);
   db.getQuestions(productId)
   .then((data) => {
     res.status(200).send(data.rows);
@@ -61,7 +60,8 @@ app.post("/qa/questions/:question_id/answers", (req, res) => {
 
 /**** MARK question as helpful ****/ // (quesiton_id, 204 NO CONTENT)
 app.put("/qa/questions/:question_id/helpful", (req, res) => {
-  db.questionHelpful(req.params.question_id)
+  let questionId = Number(req.params.question_id)
+  db.questionHelpful(questionId)
     .then(() => {
       res.status(204).send('Success mark question helpful');
     })
@@ -72,7 +72,8 @@ app.put("/qa/questions/:question_id/helpful", (req, res) => {
 
 /**** MARK answer as helpful ****/ //(answer_id, 204 NO CONTENT)
 app.put("/qa/answers/:answer_id/helpful", (req, res) => {
-  db.answerHelpful(req.params.answer_id)
+  let asnwerId = Number(req.params.answer_id)
+  db.answerHelpful(asnwerId)
     .then(() => {
       res.status(204).send('Success mark answer helpful');
     })
@@ -83,7 +84,8 @@ app.put("/qa/answers/:answer_id/helpful", (req, res) => {
 
 /**** REPORT questions ****/ // (question_id, 204 NO CONTENT)
 app.put("/qa/questions/:question_id/report", (req, res) => {
-  db.reportQuestion(req.params.question_id)
+  let questionId = Number(req.params.question_id)
+  db.reportQuestion(questionId)
   .then(() => {
     res.status(204).send('Success report question');
   })
@@ -94,7 +96,8 @@ app.put("/qa/questions/:question_id/report", (req, res) => {
 
 /**** REPORT answers ****/ // (answer_id, 204 NO CONTENT)
 app.put("/qa/answers/:answer_id/report", (req, res) => {
-  db.reportAnswer(req.params.answer_id)
+  let asnwerId = Number(req.params.answer_id)
+  db.reportAnswer(asnwerId)
   .then(() => {
     res.status(204).send('Success report answer');
   })

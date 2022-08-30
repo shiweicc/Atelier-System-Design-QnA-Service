@@ -10,7 +10,7 @@ const getQuestions = (productId) => {
     q.asker_name,
     q.question_helpfulness,
     q.question_reported AS reported,
-      ( SELECT json_agg (eachAnswer)
+      ( SELECT COALESCE(json_agg (eachAnswer), '{}')
         FROM ( SELECT
           a.question_id AS id,
           a.answer_body AS body,
@@ -18,7 +18,7 @@ const getQuestions = (productId) => {
           a.answerer_name,
           a.answer_helpfulness AS helpfulness,
           a.answer_reported AS reported,
-          ( SELECT json_agg(eachPhoto)
+          ( SELECT COALESCE(json_agg(eachPhoto), '[]')
             FROM (
               SELECT
               p.photo_id AS id,
@@ -94,7 +94,6 @@ const postAnswer = (data) => {
 }
 
 const postPhoto = (answerId, url) => {
-
   return new Promise ((resolve, reject) => {
     let queryPostPhoto = `
     INSERT INTO photos
@@ -110,7 +109,6 @@ const postPhoto = (answerId, url) => {
       }
     })
   })
-
 }
 
 const questionHelpful = (questionId) => {
@@ -143,7 +141,7 @@ const answerHelpful = (answerId) => {
 
 const reportQuestion = (questionId) => {
   return new Promise ((resolve, reject) => {
-    let queryQReport = `UPDATE questions SET question_reported = true WHERE question_id = ${questionId};`
+    let queryQReport = `UPDATE questions SET question_reported = 'true' WHERE question_id = ${questionId};`
 
     pool.query(queryQReport, (err, result) => {
       if (err) {
@@ -155,9 +153,10 @@ const reportQuestion = (questionId) => {
   })
 }
 
+
 const reportAnswer = (answerId) => {
   return new Promise ((resolve, reject) => {
-    let queryAReport = `UPDATE answers SET answer_reported = true WHERE answer_id = ${answerId};`
+    let queryAReport = `UPDATE answers SET answer_reported = 'true' WHERE answer_id = ${answerId};`
 
     pool.query(queryAReport, (err, result) => {
       if (err) {

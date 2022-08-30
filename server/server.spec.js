@@ -27,7 +27,6 @@ describe('GET /qa/question', () => {
     const res = await request(app)
       .get(`/qa/questions?product_id=${testProductID}`)
       .set('Accept', 'application/json');
-      console.log('here: ', res.body[0].answers[0].body)
     expect(res.body[0].question_body).toBe('HEY THIS IS A WEIRD QUESTION!!!!?');
     expect(res.body[1].question_body).toBe('Does this product run big or small?');
   });

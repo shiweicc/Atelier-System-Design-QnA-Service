@@ -35,8 +35,9 @@ app.post("/qa/questions", (req, res) => {
 //(question_id, body, name, email, photos, 201 CREATED)
 app.post("/qa/questions/:question_id/answers", (req, res) => {
   let photos = req.body.photos;
+  let questionId = Number(req.params.question_id);
 
-  db.postAnswer(req.body)
+  db.postAnswer(req.body, questionId)
     .then((result) => {
       let answerId = result.rows[0].answer_id;
       if (photos.length) {

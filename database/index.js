@@ -68,8 +68,7 @@ const postQuestion = (data) => {
   })
 }
 
-const postAnswer = (data) => {
-  let questionId = data.question_id;
+const postAnswer = (data, questionId) => {
   let body = data.body;
   let name = data.name;
   let email = data.email;

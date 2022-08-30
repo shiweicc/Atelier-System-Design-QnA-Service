@@ -34,3 +34,9 @@ photo_url varchar(255),
 FOREIGN KEY (answer_id) REFERENCES answers(answer_id)
 );
 
+CREATE INDEX idx_product_id ON questions(product_id, sort);
+CREATE INDEX idx_question_id ON questions(question_id);
+CREATE INDEX idx_answer_id ON answers(answer_id);
+CREATE INDEX fk_answers_question_id ON answers(question_id);
+CREATE INDEX idx_photo_id ON photos(photo_id);
+CREATE INDEX fk_photos_answer_id ON photos(answer_id);

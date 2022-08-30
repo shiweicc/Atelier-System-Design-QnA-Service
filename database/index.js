@@ -68,18 +68,22 @@ const postQuestion = (data) => {
   })
 }
 
-
-const postAnswer = (data, questionId) => {
-  let productId = data.product_id;
+const postAnswer = (data) => {
+  let questionId = data.question_id;
   let body = data.body;
   let name = data.name;
   let email = data.email;
   let date = new Date().toISOString();
 
   return new Promise ((resolve, reject) => {
-    let queryPostAnswer = ``
-
-    pool.query(queryPostQuestion, (err, result) => {
+    let queryPostAnswer = `
+    INSERT INTO answers
+    (question_id, answer_body, answer_date, answerer_name, answerer_email, answer_id)
+    VALUES (${questionId}, '${body}', '${date}', '${name}', '${email}',
+    ((SELECT MAX(answer_id) FROM answers)+1))
+    RETURNING answer_id;
+    `
+    pool.query(queryPostAnswer, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -89,6 +93,25 @@ const postAnswer = (data, questionId) => {
   })
 }
 
+const postPhoto = (answerId, url) => {
+
+  return new Promise ((resolve, reject) => {
+    let queryPostPhoto = `
+    INSERT INTO photos
+    (answer_id, photo_url, photo_id)
+    VALUES (${answerId}, '${url}',  ((SELECT MAX(photo_id) FROM photos)+1));
+    `
+
+    pool.query(queryPostPhoto, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  })
+
+}
 
 const questionHelpful = (questionId) => {
   return new Promise ((resolve, reject) => {
@@ -124,10 +147,8 @@ const reportQuestion = (questionId) => {
 
     pool.query(queryQReport, (err, result) => {
       if (err) {
-        console.log('err in DB: ', err);
         reject(err);
       } else {
-        console.log('success in DB: ', result);
         resolve(result);
       }
     })
@@ -153,6 +174,7 @@ module.exports = {
   getQuestions,
   postQuestion,
   postAnswer,
+  postPhoto,
   questionHelpful,
   answerHelpful,
   reportQuestion,

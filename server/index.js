@@ -13,37 +13,51 @@ app.get(`/qa/questions`, (req, res) => {
 
   db.getQuestions(productId)
   .then((data) => {
-    console.log('Success get questions data: ', data.rows);
-    res.status(201).send(data.rows);
+    res.status(200).send(data.rows);
   })
   .catch((err) => {
-    console.log('Fail to get questions data: ', err);
-    res.status(500).send('Fail to get questions data');
+    res.status(500).send(err);
   })
 })
 
 /**** POST a question ****/
 //(body, name, email, product_id, 201 CREATED)
 app.post("/qa/questions", (req, res) => {
-  db.postQuestion(req.query)
+  db.postQuestion(req.body)
     .then(() => {
       res.status(201).send('Success post question data');
     })
     .catch(err => {
-      res.status(500).send('Fail to post question data');
+      res.status(500).send(err);
     })
 });
 
-/**** POST an answer ****/ //(question_id, body, name, email, photos, 201 CREATED)
+/**** POST an answer ****/
+//(question_id, body, name, email, photos, 201 CREATED)
 app.post("/qa/questions/:question_id/answers", (req, res) => {
-  db.postAnswer(req.query)
-    .then(() => {
-      res.status(201).send('Success post answer data');
+  let photos = req.body.photos;
+
+  db.postAnswer(req.body)
+    .then((result) => {
+      let answerId = result.rows[0].answer_id;
+      if (photos.length) {
+        let promises = photos.map(url => db.postPhoto(answerId, url))
+        Promise.all(promises)
+          .then(data => {
+            res.status(201).send('Success post answer and photo data');
+          })
+          .catch(err => {
+            res.status(500).send(err);
+          })
+      } else {
+        res.status(201).send('Success post answer data');
+      }
     })
     .catch(err => {
-      res.status(500).send('Fail to post answer data');
+      res.status(500).send(err);
     })
 });
+
 
 /**** MARK question as helpful ****/ // (quesiton_id, 204 NO CONTENT)
 app.put("/qa/questions/:question_id/helpful", (req, res) => {
@@ -52,7 +66,7 @@ app.put("/qa/questions/:question_id/helpful", (req, res) => {
       res.status(204).send('Success mark question helpful');
     })
     .catch(err => {
-      res.status(500).send('Fail to mark question helpful');
+      res.status(500).send(err);
     })
 });
 
@@ -63,7 +77,7 @@ app.put("/qa/answers/:answer_id/helpful", (req, res) => {
       res.status(204).send('Success mark answer helpful');
     })
     .catch(err => {
-      res.status(500).send('Fail to mark answer helpful');
+      res.status(500).send(err);
     })
 });
 
@@ -74,7 +88,7 @@ app.put("/qa/questions/:question_id/report", (req, res) => {
     res.status(204).send('Success report question');
   })
   .catch(err => {
-    res.status(500).send('Fail to report question');
+    res.status(500).send(err);
   })
 });
 
@@ -85,14 +99,9 @@ app.put("/qa/answers/:answer_id/report", (req, res) => {
     res.status(204).send('Success report answer');
   })
   .catch(err => {
-    res.status(500).send('Fail to report answer');
+    res.status(500).send(err);
   })
 });
 
 
 module.exports = app;
-
-
-
-
-

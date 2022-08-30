@@ -16,7 +16,7 @@ app.get(`/qa/questions`, (req, res) => {
     res.status(200).send(data.rows);
   })
   .catch((err) => {
-    res.status(500).send(err);
+    res.status(400).send(err);
   })
 })
 
@@ -28,7 +28,7 @@ app.post("/qa/questions", (req, res) => {
       res.status(201).send('Success post question data');
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(400).send(err);
     })
 });
 
@@ -47,14 +47,14 @@ app.post("/qa/questions/:question_id/answers", (req, res) => {
             res.status(201).send('Success post answer and photo data');
           })
           .catch(err => {
-            res.status(500).send(err);
+            res.status(400).send(err);
           })
       } else {
         res.status(201).send('Success post answer data');
       }
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(400).send(err);
     })
 });
 
@@ -66,7 +66,7 @@ app.put("/qa/questions/:question_id/helpful", (req, res) => {
       res.status(204).send('Success mark question helpful');
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(400).send(err);
     })
 });
 
@@ -77,7 +77,7 @@ app.put("/qa/answers/:answer_id/helpful", (req, res) => {
       res.status(204).send('Success mark answer helpful');
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(400).send(err);
     })
 });
 
@@ -88,7 +88,7 @@ app.put("/qa/questions/:question_id/report", (req, res) => {
     res.status(204).send('Success report question');
   })
   .catch(err => {
-    res.status(500).send(err);
+    res.status(400).send(err);
   })
 });
 
@@ -99,7 +99,7 @@ app.put("/qa/answers/:answer_id/report", (req, res) => {
     res.status(204).send('Success report answer');
   })
   .catch(err => {
-    res.status(500).send(err);
+    res.status(400).send(err);
   })
 });
 

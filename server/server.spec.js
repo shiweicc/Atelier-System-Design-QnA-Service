@@ -16,11 +16,11 @@ describe('GET /qa/question', () => {
     expect(res.headers['content-type']).toMatch(/json/);
   });
 
-  test('should response 500 status with invalid product_id', async () => {
+  test('should response 400 status with invalid product_id', async () => {
     const res = await request(app)
       .get(`/qa/questions?product_id=invalidID`)
       .set('Accept', 'application/json');
-    expect(res.status).toEqual(500);
+    expect(res.status).toEqual(400);
   });
 
   test('should find the questions by provided product_id', async () => {
@@ -64,11 +64,11 @@ describe('POST /qa/question', () => {
     expect(res.text).toEqual('Success post question data');
   });
 
-  test('should response 500 status and server error with invalid input data', async () => {
+  test('should response 400 status and server error with invalid input data', async () => {
     const res = await request(app)
       .post(`/qa/questions?product_id=${testProductID}`)
       .send('invalidData')
-    expect(res.status).toEqual(500);
+    expect(res.status).toEqual(400);
   });
 });
 
@@ -111,11 +111,11 @@ describe('POST /qa/questions/:question_id/answers', () => {
     expect(res.text).toEqual('Success post answer data');
   });
 
-  test('should response 500 status and server error with invalid input data', async () => {
+  test('should response 400 status and server error with invalid input data', async () => {
     const res = await request(app)
       .post(`/qa/questions/${testQuestionID}/answers`)
       .send('invalidData')
-    expect(res.status).toEqual(500);
+    expect(res.status).toEqual(400);
   });
 });
 

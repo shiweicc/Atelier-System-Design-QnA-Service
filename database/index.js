@@ -49,14 +49,12 @@ const postQuestion = (data) => {
   let body = data.body;
   let name = data.name;
   let email = data.email;
-  let date = new Date().toISOString();
 
   return new Promise ((resolve, reject) => {
     let queryPostQuestion = `
     INSERT INTO questions
-    (product_id, question_body, question_date, asker_name, asker_email, question_id)
-    VALUES (${productId}, '${body}', '${date}', '${name}', '${email}',
-    ((SELECT MAX(question_id) FROM questions)+1));
+    (product_id, question_body, question_date, asker_name, asker_email)
+    VALUES (${productId}, '${body}', NOW(), '${name}', '${email}');
     `
     pool.query(queryPostQuestion, (err, result) => {
       if (err) {
@@ -72,14 +70,12 @@ const postAnswer = (data, questionId) => {
   let body = data.body;
   let name = data.name;
   let email = data.email;
-  let date = new Date().toISOString();
 
   return new Promise ((resolve, reject) => {
     let queryPostAnswer = `
     INSERT INTO answers
-    (question_id, answer_body, answer_date, answerer_name, answerer_email, answer_id)
-    VALUES (${questionId}, '${body}', '${date}', '${name}', '${email}',
-    ((SELECT MAX(answer_id) FROM answers)+1))
+    (question_id, answer_body, answer_date, answerer_name, answerer_email)
+    VALUES (${questionId}, '${body}', NOW(), '${name}', '${email}')
     RETURNING answer_id;
     `
     pool.query(queryPostAnswer, (err, result) => {
@@ -96,8 +92,8 @@ const postPhoto = (answerId, url) => {
   return new Promise ((resolve, reject) => {
     let queryPostPhoto = `
     INSERT INTO photos
-    (answer_id, photo_url, photo_id)
-    VALUES (${answerId}, '${url}',  ((SELECT MAX(photo_id) FROM photos)+1));
+    (answer_id, photo_url)
+    VALUES (${answerId}, '${url}');
     `
 
     pool.query(queryPostPhoto, (err, result) => {

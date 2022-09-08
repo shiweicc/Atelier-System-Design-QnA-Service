@@ -27,7 +27,6 @@ describe('GET /qa/question', () => {
     const res = await request(app)
       .get(`/qa/questions?product_id=${testProductID}`)
       .set('Accept', 'application/json');
-      console.log('here: ', res.body[0].answers[0].body)
     expect(res.body[0].question_body).toBe('HEY THIS IS A WEIRD QUESTION!!!!?');
     expect(res.body[1].question_body).toBe('Does this product run big or small?');
   });
@@ -52,8 +51,8 @@ describe('POST /qa/question', () => {
   }
 
   afterEach(async () => {
-    await pool.query('DELETE FROM answers WHERE question_id >=3518963;');
-    await pool.query('DELETE FROM questions WHERE question_id >=3518963;');
+    await pool.query('DELETE FROM answers WHERE question_id > 3518963;');
+    await pool.query('DELETE FROM questions WHERE question_id > 3518963;');
   });
 
   test('should response 201 status and success message with valid input data', async () => {
@@ -91,8 +90,8 @@ describe('POST /qa/questions/:question_id/answers', () => {
   }
 
   afterEach(async () => {
-    await pool.query('DELETE FROM photos WHERE answer_id >=6879306;');
-    await pool.query('DELETE FROM answers WHERE answer_id >=6879306;');
+    await pool.query('DELETE FROM photos WHERE answer_id > 6879306;');
+    await pool.query('DELETE FROM answers WHERE answer_id > 6879306;');
   });
 
   test('should response 201 status and success message with valid input data and photo', async () => {

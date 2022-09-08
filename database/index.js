@@ -10,7 +10,7 @@ const getQuestions = (productId) => {
     q.asker_name,
     q.question_helpfulness,
     q.question_reported AS reported,
-      ( SELECT json_agg (eachAnswer)
+      ( SELECT COALESCE(json_agg (eachAnswer), '{}')
         FROM ( SELECT
           a.question_id AS id,
           a.answer_body AS body,
@@ -18,7 +18,7 @@ const getQuestions = (productId) => {
           a.answerer_name,
           a.answer_helpfulness AS helpfulness,
           a.answer_reported AS reported,
-          ( SELECT json_agg(eachPhoto)
+          ( SELECT COALESCE(json_agg(eachPhoto), '[]')
             FROM (
               SELECT
               p.photo_id AS id,
@@ -49,14 +49,12 @@ const postQuestion = (data) => {
   let body = data.body;
   let name = data.name;
   let email = data.email;
-  let date = new Date().toISOString();
 
   return new Promise ((resolve, reject) => {
     let queryPostQuestion = `
     INSERT INTO questions
-    (product_id, question_body, question_date, asker_name, asker_email, question_id)
-    VALUES (${productId}, '${body}', '${date}', '${name}', '${email}',
-    ((SELECT MAX(question_id) FROM questions)+1));
+    (product_id, question_body, question_date, asker_name, asker_email)
+    VALUES (${productId}, '${body}', NOW(), '${name}', '${email}');
     `
     pool.query(queryPostQuestion, (err, result) => {
       if (err) {
@@ -68,19 +66,16 @@ const postQuestion = (data) => {
   })
 }
 
-const postAnswer = (data) => {
-  let questionId = data.question_id;
+const postAnswer = (data, questionId) => {
   let body = data.body;
   let name = data.name;
   let email = data.email;
-  let date = new Date().toISOString();
 
   return new Promise ((resolve, reject) => {
     let queryPostAnswer = `
     INSERT INTO answers
-    (question_id, answer_body, answer_date, answerer_name, answerer_email, answer_id)
-    VALUES (${questionId}, '${body}', '${date}', '${name}', '${email}',
-    ((SELECT MAX(answer_id) FROM answers)+1))
+    (question_id, answer_body, answer_date, answerer_name, answerer_email)
+    VALUES (${questionId}, '${body}', NOW(), '${name}', '${email}')
     RETURNING answer_id;
     `
     pool.query(queryPostAnswer, (err, result) => {
@@ -94,12 +89,11 @@ const postAnswer = (data) => {
 }
 
 const postPhoto = (answerId, url) => {
-
   return new Promise ((resolve, reject) => {
     let queryPostPhoto = `
     INSERT INTO photos
-    (answer_id, photo_url, photo_id)
-    VALUES (${answerId}, '${url}',  ((SELECT MAX(photo_id) FROM photos)+1));
+    (answer_id, photo_url)
+    VALUES (${answerId}, '${url}');
     `
 
     pool.query(queryPostPhoto, (err, result) => {
@@ -110,7 +104,6 @@ const postPhoto = (answerId, url) => {
       }
     })
   })
-
 }
 
 const questionHelpful = (questionId) => {
@@ -143,7 +136,7 @@ const answerHelpful = (answerId) => {
 
 const reportQuestion = (questionId) => {
   return new Promise ((resolve, reject) => {
-    let queryQReport = `UPDATE questions SET question_reported = true WHERE question_id = ${questionId};`
+    let queryQReport = `UPDATE questions SET question_reported = 'true' WHERE question_id = ${questionId};`
 
     pool.query(queryQReport, (err, result) => {
       if (err) {
@@ -155,9 +148,10 @@ const reportQuestion = (questionId) => {
   })
 }
 
+
 const reportAnswer = (answerId) => {
   return new Promise ((resolve, reject) => {
-    let queryAReport = `UPDATE answers SET answer_reported = true WHERE answer_id = ${answerId};`
+    let queryAReport = `UPDATE answers SET answer_reported = 'true' WHERE answer_id = ${answerId};`
 
     pool.query(queryAReport, (err, result) => {
       if (err) {

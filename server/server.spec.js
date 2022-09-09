@@ -1,6 +1,6 @@
 const app = require("./index.js");
 const request = require("supertest");
-const pool = require("../config.js");
+const {pool: pool} = require("../database/index.js");
 
 // close pool after tests are completed
 afterAll(() => pool.end());

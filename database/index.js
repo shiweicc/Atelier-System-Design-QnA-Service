@@ -1,4 +1,13 @@
-const pool = require('../config.js');
+const { Pool } = require('pg')
+require('dotenv').config()
+
+const pool = new Pool({
+  host: process.env.HOST,
+  database: process.env.DATABASE,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  port: process.env.PORT,
+})
 
 const getQuestions = (productId) => {
   return new Promise ((resolve, reject) => {
@@ -173,6 +182,7 @@ module.exports = {
   answerHelpful,
   reportQuestion,
   reportAnswer,
+  pool,
 };
 
 

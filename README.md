@@ -1,5 +1,5 @@
 # Atelier Q&A | Back-end services for e-commerce site
-I worked with another two software engineers to rebuild the back-end API service from a monolithic to service-oriented microservices to support our existing e-commerce application in this project. The service I built was scaled to meet the demands of production traffic, which is 5000rps with < 1s response time with a 0% error rate. 
+I worked with other two software engineers to rebuild the back-end API service from a monolithic to service-oriented microservices to support our existing e-commerce application in this project. The service I built was scaled to meet the demands of production traffic, which is 5000rps with < 1s response time with a 0% error rate. 
 
 ## Technologies used
 
